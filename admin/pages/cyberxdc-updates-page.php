@@ -1,7 +1,7 @@
 <?php
 // Function to get the latest version from GitHub
 function cyberxdc_get_latest_version_from_github() {
-    $github_url = 'https://raw.githubusercontent.com/cyberxdc/cyberxdc-wp-plugin/main/version.json';
+    $github_url = 'https://raw.githubusercontent.com/cyberxdc/wpp-cyberxdc/main/version.json';
     $response = wp_remote_get($github_url);
     if (is_wp_error($response)) {
         return false;
@@ -110,7 +110,7 @@ function cyberxdc_handle_update_request()
 function cyberxdc_custom_update_functionality()
 {
     $repo_owner = 'cyberxdc';
-    $repo_name = 'cyberxdc-wp-plugin';
+    $repo_name = 'wpp-cyberxdc';
     $tag = 'main'; 
     $download_url = "https://github.com/{$repo_owner}/{$repo_name}/archive/refs/heads/{$tag}.zip";
     $plugin_temp_zip = WP_PLUGIN_DIR . '/cyberxdc-temp.zip';
@@ -151,7 +151,7 @@ function cyberxdc_custom_update_functionality()
     if (!$wp_filesystem->delete($plugin_temp_zip)) {
         error_log('Failed to delete the temporary plugin ZIP file.');
     }
-    if (!$wp_filesystem->exists(WP_PLUGIN_DIR . '/cyberxdc-wp-plugin-main')) {
+    if (!$wp_filesystem->exists(WP_PLUGIN_DIR . '/wpp-cyberxdc-main')) {
         return false;
     }
     return true;
