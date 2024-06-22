@@ -80,5 +80,16 @@ class Cyberxdc_Activator
 		dbDelta($sql_logs);
 		dbDelta($sql_submissions);
 		dbDelta($sql_cyberxdc_visitor_logs);
+
+		// Add options
+		if (get_option('cyberxdc_license_key') === false) {
+			add_option('cyberxdc_license_key', '');
+		}
+		if (get_option('cyberxdc_license_status') === false) {
+			add_option('cyberxdc_license_status', 'inactive');
+		}
+		if (get_option('cyberxdc_license_validation_status') === false) {
+			add_option('cyberxdc_license_validation_status', '');
+		}
 	}
 }

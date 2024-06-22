@@ -48,8 +48,7 @@ if (!defined('CYBERXDC_PLUGIN_URL')) {
 function activate_cyberxdc()
 {
     require_once plugin_dir_path(__FILE__) . 'includes/class-cyberxdc-activator.php';
-    add_option('cyberxdc_license_key', '');
-    add_option('cyberxdc_license_status', 'inactive');
+    cyberxdc_validate_license();
     Cyberxdc_Activator::activate();
 }
 
@@ -266,9 +265,9 @@ function cyberxdc_schedule_daily_license_validation()
 add_action('wp', 'cyberxdc_schedule_daily_license_validation');
 
 
-function cyberxdc_validate_license()
-{
+function cyberxdc_validate_license() {
     $stored_license_key = get_option('cyberxdc_license_key');
+    
     if (!empty($stored_license_key)) {
         $validation_api_url = CYBERXDC_PLUGIN_URL . '/licenses/validate';
 
@@ -276,21 +275,49 @@ function cyberxdc_validate_license()
             'license_key' => $stored_license_key,
             'domain' => home_url(),
         );
+
         $validation_response = wp_remote_post($validation_api_url, array(
             'body' => $validation_data,
         ));
 
+        if (is_wp_error($validation_response)) {
+            error_log('License validation error: ' . $validation_response->get_error_message());
+            return;
+        }
+
         $response_body = wp_remote_retrieve_body($validation_response);
         $response_data = json_decode($response_body, true);
         error_log('License validation response: ' . print_r($response_data, true));
-        if ($response_data['valid'] !== true) {
-            error_log('License validation failed: ' . print_r($response_data, true));
-            // cyberxdc_delete_plugin_directory();
+
+        if (isset($response_data['valid']) && $response_data['valid'] === true) {
+            // License is valid
+            error_log('License validation successful.');
+            update_option('cyberxdc_license_validation_status', 'true');
         } else {
-            error_log('License validation successful: ' . print_r($response_data, true));
+            // License is not valid
+            error_log('License validation failed: ' . print_r($response_data, true));
+            update_option('cyberxdc_license_validation_status', 'false');
+            update_option('cyberxdc_license_status', 'invalid');
+
+            // Schedule deletion after 30 days if not already scheduled
+            if (!wp_next_scheduled('cyberxdc_delete_plugin_event')) {
+                wp_schedule_single_event(time() + 30 * DAY_IN_SECONDS, 'cyberxdc_delete_plugin_event');
+                
+                // Update or add option cyberxdc_license_validation_failed_date
+                $failed_date = get_option('cyberxdc_license_validation_failed_date');
+                if (!$failed_date) {
+                    add_option('cyberxdc_license_validation_failed_date', current_time('timestamp'));
+                } else {
+                    update_option('cyberxdc_license_validation_failed_date', current_time('timestamp'));
+                }
+            }
         }
     }
 }
+
+add_action('cyberxdc_validate_license_event', 'cyberxdc_validate_license');
+add_action('cyberxdc_delete_plugin_event', 'cyberxdc_delete_plugin_directory');
+
 function cyberxdc_delete_plugin_directory()
 {
     deactivate_plugins(plugin_basename(__FILE__));
@@ -314,12 +341,4 @@ function cyberxdc_recursive_remove_directory($dir)
         (is_dir("$dir/$file")) ? cyberxdc_recursive_remove_directory("$dir/$file") : unlink("$dir/$file");
     }
     return rmdir($dir);
-}
-add_action('cyberxdc_validate_license_event', 'cyberxdc_validate_license');
-add_action('wp_login', 'cyberxdc_run_validation_on_admin_login', 10, 2);
-function cyberxdc_run_validation_on_admin_login($user_login, $user)
-{
-    if (in_array('administrator', (array) $user->roles)) {
-        cyberxdc_validate_license();
-    }
 }

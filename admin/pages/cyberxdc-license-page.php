@@ -1,5 +1,6 @@
 <?php
-function cyberxdc_generate_license_page() {
+function cyberxdc_generate_license_page()
+{
     // Initialize notice variable
     $notice = '';
 
@@ -7,13 +8,13 @@ function cyberxdc_generate_license_page() {
     if (isset($_POST['generate_license'])) {
         // Verify nonce for security
         check_admin_referer('cyberxdc_generate_license_nonce');
-        
+
         // API endpoint to generate the license key
         $api_url = CYBERXDC_PLUGIN_URL . '/licenses/generate';
 
         // Prepare the data to send to the API
         $post_data = array(
-            'domain' => get_bloginfo('siteurl'),
+            'domain' => home_url(),
         );
 
         // Send POST request to the API to generate the license key
@@ -46,12 +47,37 @@ function cyberxdc_generate_license_page() {
     }
 
     // Retrieve the saved license key
-    $license_key = get_option('cyberxdc_license_key');
 
+    $license_key = get_option('cyberxdc_license_key');
+    // Retrieve the saved license status
+    $license_status = get_option('cyberxdc_license_status');
     // Check if the license activation form was submitted
     if (isset($_POST['activate_license'])) {
         // Verify nonce for security
         check_admin_referer('cyberxdc_activate_license_nonce');
+
+        // Get the license key from the form
+        if (!isset($_POST['license_key'])) {
+            $notice = '<div class="notice notice-error is-dismissible"><p>Error activating license: License key not found.</p></div>';
+            return;
+        }
+        if (empty($_POST['license_key'])) {
+            $notice = '<div class="notice notice-error is-dismissible"><p>Error activating license: License key is empty.</p></div>';
+            return;
+        }
+        if (!is_string($_POST['license_key'])) {
+            $notice = '<div class="notice notice-error is-dismissible"><p>Error activating license: License key is not a string.</p></div>';
+            return;
+        }
+        if (strlen($_POST['license_key']) < 10) {
+            $notice = '<div class="notice notice-error is-dismissible"><p>Error activating license: License key is too short.</p></div>';
+            return;
+        }
+        if ($license_status == 'invalid') {
+            $license_key = sanitize_text_field($_POST['license_key']);
+        }else{
+            $license_key = get_option('cyberxdc_license_key');
+        }
 
         // API endpoint for license activation
         $activation_api_url = CYBERXDC_PLUGIN_URL . '/licenses/activate';
@@ -59,7 +85,7 @@ function cyberxdc_generate_license_page() {
         // Prepare data for the activation request
         $activation_data = array(
             'license_key' => $license_key,
-            'domain' => get_bloginfo('siteurl'),
+            'domain' => home_url(),
             'admin_email' => get_option('admin_email'),
             'server_ip' => $_SERVER['SERVER_ADDR'],
             'user_ip' => $_SERVER['REMOTE_ADDR'],
@@ -80,6 +106,11 @@ function cyberxdc_generate_license_page() {
             if ($response_code == 200) {
                 // Assuming HTTP status 200 indicates success
                 update_option('cyberxdc_license_status', 'active');
+                if (wp_next_scheduled('cyberxdc_delete_plugin_event')) {
+                    wp_unschedule_event(wp_next_scheduled('cyberxdc_delete_plugin_event'), 'cyberxdc_delete_plugin_event');
+                }
+                // Clear or reset any related options
+                delete_option('cyberxdc_license_validation_failed_date');
                 $notice = '<div class="notice notice-success is-dismissible"><p>License activated successfully.</p></div>';
             } else {
                 // Handle other status codes or error responses
@@ -98,29 +129,42 @@ function cyberxdc_generate_license_page() {
         'Contact Form 7 Database' => 'admin.php?page=cyberxdc-cf7-submissions',
         'Logs and Activities' => 'admin.php?page=cyberxdc-logs',
     );
-
-    ?>
+?>
 
     <div class="cyberxdc-wrap">
         <div class="container">
-            <?php if (get_option('cyberxdc_license_key') === '') : ?>
-                <div class="card">
-                    <h2>Generate License Key</h2>
-                    <?php echo $notice; ?>
-                    <form method="post">
-                        <?php wp_nonce_field('cyberxdc_generate_license_nonce'); ?>
-                        <input type="submit" class="button button-primary" name="generate_license" value="Generate License Key">
-                    </form>
-                </div>
-            <?php elseif (get_option('cyberxdc_license_status') != 'active') : ?>
+            <?php if (get_option('cyberxdc_license_status') == 'invalid') : ?>
                 <div class="card">
                     <h2>Activate License Key</h2>
                     <?php echo $notice; ?>
-                    <p>License Key: <strong><?php echo esc_html($license_key); ?></strong></p>
                     <form method="post">
                         <?php wp_nonce_field('cyberxdc_activate_license_nonce'); ?>
-                        <input type="submit" class="button button-primary" name="activate_license" value="Activate License">
+                        <input type="text" name="license_key" placeholder="Enter License Key" required>
+                        <input type="submit" class="button button-primary" name="activate_license" value="Activate License ">
                     </form>
+                    <br>
+                    <?php
+                    $failed_date = get_option('cyberxdc_license_validation_failed_date');
+                    if ($failed_date) {
+                        $days_remaining = 30 - floor((time() - $failed_date) / DAY_IN_SECONDS);
+                        if ($days_remaining > 0) {
+                    ?>
+                            <p style="margin: 0px; padding: 12px;" class="update-message notice inline notice-error notice-alt">This plugin will be deleted in <?php echo esc_html($days_remaining) . ' days.'; ?></p>
+                        <?php
+                        } else {
+                        ?>
+                            <p style="margin: 0px; padding: 12px;" class="update-message notice inline notice-error notice-alt">This plugin will be delete soon.</p>
+                    <?php
+                        }
+                    }
+                    ?>
+                </div>
+            <?php elseif (get_option('cyberxdc_license_status') == 'active') : ?>
+                <div class="card">
+                    <h2>License Status</h2>
+                    <?php echo $notice; ?>
+                    <p>License Key: <strong><?php echo esc_html($license_key); ?></strong></p>
+                    <p>License Status: <strong><?php echo esc_html(get_option('cyberxdc_license_status')); ?></strong></p>
                 </div>
             <?php else : ?>
                 <div class="card">
@@ -132,14 +176,14 @@ function cyberxdc_generate_license_page() {
             <?php endif; ?>
             <div style="width: 100%; max-width: 75%;" class="card">
                 <h2>Importants Features</h2>
-                <ul style="display: flex; flex-wrap: wrap;" >
+                <ul style="display: flex; flex-wrap: wrap;">
                     <?php foreach ($important_features as $feature => $link) : ?>
-                        <li style="margin: 4px;" ><a href="<?php echo $link; ?>" class="button"><?php echo $feature; ?></a></li>
+                        <li style="margin: 4px;"><a href="<?php echo $link; ?>" class="button"><?php echo $feature; ?></a></li>
                     <?php endforeach; ?>
                 </ul>
             </div>
         </div>
     </div>
-    <?php
+<?php
 }
 ?>
