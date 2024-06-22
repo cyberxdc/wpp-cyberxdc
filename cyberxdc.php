@@ -37,9 +37,9 @@ if (!defined('CYBERXDC_PATH')) {
 if (!defined('CYBERXDC_AUTHOR_URI')) {
     define('CYBERXDC_AUTHOR_URI', 'http://localhost/cyberxdc');
 }
-define('CYBERXDC_PLUGIN_URL', 'http://localhost/cyberxdc');
+define('CYBERXDC_PLUGIN_URL', 'https://cyberxdc.online');
 if (!defined('CYBERXDC_PLUGIN_URL')) {
-    define('CYBERXDC_PLUGIN_URL', 'http://localhost/cyberxdc');
+    define('CYBERXDC_PLUGIN_URL', 'https://cyberxdc.online');
 }
 /**
  * The code that runs during plugin activation.
