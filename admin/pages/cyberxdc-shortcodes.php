@@ -38,7 +38,7 @@ function cyberxdc_shortcodes_page()
         <div class="container">
             <div style="max-width: 100%;" class="cyberxdc-header card">
                 <h1>CyberXDC Shortcodes</h1>
-                <p>Welcome to the CyberXDC Shortcodes page!</p>
+                <p>Unlock the full potential of WordPress with CyberXDC's comprehensive shortcode library. Seamlessly integrate essential functions like login, registration, and password recovery into your site's content. Compatible with popular plugin shortcodes, CyberXDC empowers you to customize user experiences effortlessly. Streamline site management and enhance functionality with a versatile shortcode solution designed to optimize your WordPress workflow.</p>
             </div>
             <div style="display: flex;" class="row">
                 <div class="card">

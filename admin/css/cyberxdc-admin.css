@@ -8,10 +8,10 @@
   flex-wrap: wrap;
   width: 100%;
 }
-
-.toplevel_page_cyberxdc #wpcontent {
-  background-color: white;
+.cyberxdc-wrap{
+  max-width: 1200px;
 }
+
 
 .cyberxdc-wrap .container .card {
   margin-right: 1%;

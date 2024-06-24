@@ -116,32 +116,9 @@ function custom_admin_footer_text($text)
 }
 
 add_filter('admin_footer_text', 'custom_admin_footer_text');
-// img meta data
 
-add_action('admin_init', 'update_existing_media_metadata');
 
-function update_existing_media_metadata()
-{
-    $attachments = get_posts(array(
-        'post_type' => 'attachment',
-        'numberposts' => -1,
-    ));
-
-    foreach ($attachments as $attachment) {
-        if (strpos($attachment->post_mime_type, 'image') !== false) {
-            $original_title = $attachment->post_title;
-            $formatted_title = ucwords(str_replace('-', ' ', $original_title));
-            update_post_meta($attachment->ID, '_wp_attachment_image_alt', $formatted_title);
-            update_post_meta($attachment->ID, '_wp_attachment_metadata', array(
-                'image_meta' => array(
-                    'caption' => $formatted_title,
-                    'title' => $formatted_title,
-                    'description' => $formatted_title,
-                ),
-            ));
-        }
-    }
-}
+// Trigger the function when the plugin or theme is activated or settings are saved
 function custom_login_hook($username, $password)
 {
     global $wpdb;

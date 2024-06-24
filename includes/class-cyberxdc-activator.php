@@ -87,9 +87,9 @@ class Cyberxdc_Activator
 		}
 		if (get_option('cyberxdc_license_status') === false) {
 			add_option('cyberxdc_license_status', 'inactive');
-		}
-		if (get_option('cyberxdc_license_validation_status') === false) {
-			add_option('cyberxdc_license_validation_status', '');
+		}else{
+			cyberxdc_validate_license();
+			error_log("License status on plugin activation: " . get_option('cyberxdc_license_status'));
 		}
 	}
 }

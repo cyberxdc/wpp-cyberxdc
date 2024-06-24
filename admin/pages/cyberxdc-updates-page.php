@@ -51,7 +51,7 @@ function cyberxdc_updates_page() {
                 <div class="cyberxdc-content">
                     <div class="cyberxdc-update-info">
                         <h2>Update Plugin</h2>
-                        <p>Welcome to the CyberXDC Updates & Licenses page!</p>
+                        <p>Welcome to the CyberXDC Updates & Licenses page! Keep your plugin secure and feature-rich by staying up-to-date with the latest version.</p>
                         <p>Plugin Version: <?php echo esc_html($current_version); ?></p>
                         <?php if ($has_update): ?>
                             <p class="cyberxdc-update-info-message" style="color: red;">New Version Available: <?php echo esc_html($latest_version); ?></p>
@@ -68,17 +68,18 @@ function cyberxdc_updates_page() {
                     <div class="cyberxdc-license-info">
                         <h2>Licenses & Agreements</h2>
                         <h3>End User License Agreement (EULA)</h3>
-                        <p>This End User License Agreement ("EULA") governs your use of the CyberXDC plugin ("the Software"). By using the Software, you agree to be bound by the terms of this EULA.</p>
+                        <p>This End User License Agreement ("EULA") governs your use of the CyberXDC plugin ("the Software"). By using the Software, you agree to the terms outlined below.</p>
                         <ol>
-                            <li><strong>License Grant:</strong> CyberXDC grants you a non-exclusive, revocable, non-transferable license to use, copy, and modify the Software for personal and commercial purposes, without any restriction or limitation.</li>
-                            <li><strong>Ownership:</strong> You acknowledge that CyberXDC retains all rights, title, and interest in and to the Software. This EULA does not grant you any ownership rights to the Software.</li>
-                            <li><strong>Restrictions:</strong> You may not sublicense, sell, or distribute the Software, in whole or in part, without explicit permission from CyberXDC.</li>
-                            <li><strong>Support:</strong> CyberXDC may provide support services related to the Software at its discretion, but is not obligated to do so.</li>
-                            <li><strong>Warranty:</strong> THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. CYBERXDC DISCLAIMS ALL WARRANTIES, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.</li>
-                            <li><strong>Limitation of Liability:</strong> IN NO EVENT SHALL CYBERXDC BE LIABLE FOR ANY DAMAGES ARISING FROM THE USE OF THE SOFTWARE, INCLUDING BUT NOT LIMITED TO DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.</li>
-                            <li><strong>Indemnification:</strong> You agree to indemnify and hold harmless CyberXDC from any claims, damages, losses, liabilities, and expenses arising out of your use of the Software.</li>
-                            <li><strong>Governing Law:</strong> This EULA shall be governed by and construed in accordance with the laws of [Your Jurisdiction].</li>
-                            <li><strong>Entire Agreement:</strong> This EULA constitutes the entire agreement between you and CyberXDC regarding the Software.</li>
+                            <li><strong>License Grant:</strong> You are granted a non-exclusive, non-transferable license to use the CyberXDC plugin, provided you have a valid and active license. This allows you to install and use the plugin on your website(s) in accordance with the license type purchased.</li>
+                            <li><strong>Ownership:</strong> The CyberXDC plugin is the intellectual property of CyberXDC. This EULA does not transfer any ownership rights. You are provided a license to use the plugin under the terms specified.</li>
+                            <li><strong>Restrictions:</strong> You may not redistribute, sell, lease, or sublicense the CyberXDC plugin without explicit permission from CyberXDC. You are also prohibited from reverse engineering or attempting to derive the source code of the plugin, except where such activity is expressly permitted by applicable law.</li>
+                            <li><strong>Third-Party Components:</strong> CyberXDC may include third-party libraries and components licensed under the GPL. These components are used in accordance with their respective licenses and do not affect the proprietary nature of the CyberXDC plugin itself.</li>
+                            <li><strong>Support and Updates:</strong> With a valid license, you are entitled to receive support and updates for the duration of your license term. CyberXDC reserves the right to limit or discontinue support for any reason, including end of life of the plugin.</li>
+                            <li><strong>Warranty Disclaimer:</strong> The CyberXDC plugin is provided "as is" without any warranties of any kind. CyberXDC disclaims all warranties, whether express or implied, including but not limited to implied warranties of merchantability, fitness for a particular purpose, and non-infringement.</li>
+                            <li><strong>Limitation of Liability:</strong> In no event shall CyberXDC be liable for any damages arising from the use or inability to use the plugin, including but not limited to direct, indirect, incidental, special, or consequential damages, even if CyberXDC has been advised of the possibility of such damages.</li>
+                            <li><strong>Indemnification:</strong> You agree to indemnify and hold harmless CyberXDC from any claims, damages, losses, liabilities, and expenses arising out of your use of the CyberXDC plugin.</li>
+                            <li><strong>Governing Law:</strong> This EULA shall be governed by and construed in accordance with the laws of India. Any disputes arising under this EULA shall be subject to the exclusive jurisdiction of the courts in India for Indian residents. For users outside India, this EULA shall be governed by the laws applicable in their respective jurisdictions, and any disputes shall be subject to the exclusive jurisdiction of the courts in their jurisdiction.</li>
+                            <li><strong>Entire Agreement:</strong> This EULA constitutes the entire agreement between you and CyberXDC regarding the use of the plugin and supersedes all prior agreements and understandings, whether written or oral, relating to the subject matter hereof.</li>
                         </ol>
                     </div>
                 </div>

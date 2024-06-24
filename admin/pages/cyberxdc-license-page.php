@@ -174,7 +174,7 @@ function cyberxdc_generate_license_page()
                     <p>License Status: <strong><?php echo esc_html(get_option('cyberxdc_license_status')); ?></strong></p>
                 </div>
             <?php endif; ?>
-            <div style="width: 100%; max-width: 75%;" class="card">
+            <div  class="card">
                 <h2>Importants Features</h2>
                 <ul style="display: flex; flex-wrap: wrap;">
                     <?php foreach ($important_features as $feature => $link) : ?>

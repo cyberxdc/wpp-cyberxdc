@@ -12,10 +12,9 @@ function display_cyberxdc_logs_page()
     <div class="cyberxdc-wrap">
         <div class="container">
             <div style="max-width: 100%;" class="card">
-                <h1>Welcome to CyberXDC Logs & Activity</h1>
+                <h1>Logs & Activity</h1>
                 <div class="container">
-                    <p>Explore Your Site's Activity and Logs</p>
-                    <p>Gain Insight into User Interactions and System Changes</p>
+                    <p>Stay informed and proactive with CyberXDC's comprehensive Logs and Activities feature. Gain detailed insights into user interactions and visitor activities across your WordPress site. Monitor login attempts, content changes, and visitor behavior effortlessly from a centralized dashboard. Our robust tracking system enables you to detect anomalies, enhance security, and optimize site performance. Empower your site management with actionable data and detailed activity logs to ensure a seamless and secure user experience.</p>
                 </div>
                 <div class="container">
                     <h2 class="nav-tab-wrapper">

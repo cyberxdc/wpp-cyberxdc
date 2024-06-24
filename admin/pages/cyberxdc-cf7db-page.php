@@ -116,8 +116,8 @@ function cyberxdc_render_cf7db_page()
     <div class="cyberxdc-wrap">
         <div class="container">
             <div style="max-width: 100%;" class="card">
-                <h1>CyberXDC Contact Form 7 Submissions</h1>
-                <p class="desc">This is list of all contact form and submissions</p>
+                <h1>Contact Form 7 Submissions</h1>
+                <p class="desc">Centralize and manage your Contact Form 7 submissions with ease using CyberXDC. Our integrated database solution captures every form entry, ensuring you never miss critical communication from your audience. Access, search, and organize submissions directly from your WordPress dashboard, enhancing your ability to respond swiftly and maintain comprehensive records. Simplify your workflow and improve data handling efficiency, all while keeping valuable information at your fingertips.</p>
             </div>
             <div style="max-width: 100%;margin-top: 20px; " class="card">
                 <table style="margin-top: 20px;" class="wp-list-table widefat fixed striped">
@@ -188,7 +188,7 @@ function cyberxdc_render_submissions_page($form_id)
         <div class="cyberxdc-wrap">
             <div class="container">
                 <div style="max-width: 100%;" class="card">
-                    <h1>CyberXDC Contact Form 7 Submissions</h1>
+                    <h1>Contact Form 7 Submissions</h1>
                     <p class="desc">This is list of all contact form and submissions</p>
                     <h3 class="form-name">Form Name: <?php echo $contact_form->post_title; ?></h3>
                     <p>Submissions for Form ID: <?php echo $form_id; ?></p>

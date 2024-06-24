@@ -56,8 +56,8 @@ function cyberxdc_smtp_page()
     <div class="cyberxdc-wrap">
         <div class="container">
             <div style=" max-width: 100%;" class="cyberxdc-header card">
-                <h1>CyberXDC SMTP Settings</h1>
-                <p>Welcome to the CyberXDC SMTP Settings page!</p>
+                <h1>SMTP Settings</h1>
+                <p>Effortlessly configure and manage SMTP settings directly from your WordPress admin panel with CyberXDC. Ensure reliable email delivery and seamless communication with your audience. Integrate with your preferred email service providers and validate configurations with our convenient test email feature. Simplify your workflow and enhance user engagement with efficient email management, all within a few clicks.</p>
             </div>
             <div style="display: flex;" class="row">
                 <div class="card col-md-6">

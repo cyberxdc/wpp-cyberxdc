@@ -6,9 +6,8 @@ function cyberxdc_customization_page()
     <div class="cyberxdc-wrap">
         <div class="container">
             <div style="max-width: 100%;" class="card">
-                <h1>CyberXDC Customization</h1>
-                <h2>Welcome to the CyberXDC Customization page!</h2>
-                <p class="desc">This is the CyberXDC Customization page. You can customize the login page, header and footer scripts, and more.</p>
+                <h1>Customization</h1>
+                <p class="desc">Personalize your WordPress site with CyberXDC's extensive customization options. Effortlessly modify the login page, inject custom CSS into headers and footers, and integrate scripts for enhanced functionality. Whether you're rebranding or refining user experience, CyberXDC empowers you to showcase your unique identity with ease. Simplify site management and elevate aesthetics with customizable solutions designed to amplify your WordPress presence.</p>
                 <h2 class="nav-tab-wrapper">
                     <a href="?page=cyberxdc-customization&tab=login_page" class="nav-tab <?php echo $active_tab == 'login_page' ? 'nav-tab-active' : ''; ?>">Login Page</a>
                     <a href="?page=cyberxdc-customization&tab=custom_style" class="nav-tab <?php echo $active_tab == 'custom_style' ? 'nav-tab-active' : ''; ?>">Custom Style</a>

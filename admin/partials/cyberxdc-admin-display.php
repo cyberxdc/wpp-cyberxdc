@@ -99,20 +99,17 @@ function cyberxdc_dashboard_page()
     <div class="cyberxdc-wrap">
         <div class="container">
             <div style="max-width: 100%;" class="cyberxdc-header card">
-                <h1>Welcome to the CyberXDC Dashboard</h1>
+                <h1>CyberXDC Dashboard</h1>
                 <h2>Empowering your online presence with CyberXDC</h2>
-                <p>Empower your website management experience with the CyberXDC Dashboard, a comprehensive toolkit designed to streamline and fortify your online presence.</p>
-                <p>Experience seamless control over critical aspects of your website, from optimizing security measures to fine-tuning customization options, all within a centralized and user-friendly interface.</p>
-                <p>Effortlessly navigate through a wealth of features, including advanced SMTP setup, robust security protocols, personalized customizations, and insightful user and visitor activity monitoring.</p>
-                <p>With CyberXDC, elevate your website management prowess and unlock the full potential of your digital presence. Welcome aboard!</p>
+                <p>Transform your WordPress management experience with the CyberXDC Dashboard. Gain unparalleled insights and control over your site's performance, security, and user interactions from a centralized, intuitive interface. Monitor server health, track user activities, and analyze visitor interactions seamlessly to ensure peak performance and safeguard your online presence. Stay ahead with real-time data and actionable insights, empowering you to make informed decisions and optimize your WordPress site with ease.</p>
                 <br>
                 <?php if (get_option('cyberxdc_license_key') == '' || get_option('cyberxdc_license_key')) {
                     cyberxdc_generate_license_page();
                 }
                 ?>
             </div>
-            <div style="display: flex; width:100%; flex-wrap: wrap" class="row">
-                <div class="card col-sm-6">
+            <div style="display: flex; flex-direction:column; width:100%; max-width: 100%; flex-wrap: wrap" class="row">
+                <div style="max-width: 100%; width:100%" class="card col-sm-6">
                     <h2>Server Information</h2>
                     <table class="table wp-list-table widefat fixed striped table-view-list">
                         <thead>
@@ -133,7 +130,7 @@ function cyberxdc_dashboard_page()
                     <br>
                     <a href="admin.php?page=server_details" class="button">View All Server Details</a>
                 </div>
-                <div class="card col-sm-6">
+                <div style="max-width: 100%; width:100%" class="card col-sm-6">
                     <h2>Visitors Logs</h2>
                     <table class="table wp-list-table widefat fixed striped table-view-list">
                         <thead>
@@ -158,7 +155,7 @@ function cyberxdc_dashboard_page()
                     <br>
                     <a href="admin.php?page=cyberxdc-logs&tab=visitor-logs" class="button">View All Visitors Logs</a>
                 </div>
-                <div class="card col-sm-6">
+                <div style="max-width: 100%; width:100%" class="card col-sm-6 ">
                     <h2>Users Logs</h2>
                     <table class="table wp-list-table widefat fixed striped table-view-list">
                         <thead>

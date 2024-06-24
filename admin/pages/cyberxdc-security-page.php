@@ -14,8 +14,8 @@ function cyberxdc_security_page() {
             <div style="max-width: 100%;" class="wp-header card">
                 <div class="header-section">
                     <div class="">
-                        <h1 class="wp-heading-inline">CyberXDC Security</h1>
-                        <p>Welcome to the CyberXDC Settings page!</p>
+                        <h1 class="wp-heading-inline">Security</h1>
+                        <p>Protect your WordPress site with CyberXDC's robust security features. From general site hardening to advanced user, database, and file security measures, CyberXDC ensures your website remains safe from malicious threats. Implement two-factor authentication and configurable firewalls to fortify your defenses. Safeguard sensitive data and maintain trust with your audience through proactive security measures tailored to enhance your site's resilience against cyber threats.</p>
                     </div>
                     <div class="container">
                         <h2 class="nav-tab-wrapper">

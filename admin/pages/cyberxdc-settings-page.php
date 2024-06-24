@@ -18,8 +18,8 @@ function cyberxdc_settings_page()
             <div style="max-width: 100%;" class="wp-header card ">
                 <div class="header-section">
                     <div class="">
-                        <h1 class="wp-heading-inline">CyberXDC Settings</h1>
-                        <p>Welcome to the CyberXDC Settings page!</p>
+                        <h1 class="wp-heading-inline">Settings</h1>
+                        <p>Fine-tune your WordPress site with CyberXDC's comprehensive settings management. From global preferences to specific page, post, media, and file upload configurations, CyberXDC simplifies site optimization. Streamline workflow and enhance user experience with intuitive controls designed to maximize performance and efficiency. Empower your site with tailored settings that cater to your unique needs, ensuring seamless operation and scalability in your WordPress journey.</p>
                     </div>
                     <div class="container">
                         <h2 class="nav-tab-wrapper">
