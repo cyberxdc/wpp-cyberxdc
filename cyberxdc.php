@@ -321,6 +321,17 @@ function cyberxdc_validate_license() {
     } else {
         error_log('No license key found');
         update_option('cyberxdc_license_status', 'invalid');
+        // Schedule deletion after 30 days if not already scheduled
+        if (!wp_next_scheduled('cyberxdc_delete_plugin_event')) {
+            wp_schedule_single_event(time() + 30 * DAY_IN_SECONDS, 'cyberxdc_delete_plugin_event');
+            // Update or add option cyberxdc_license_validation_failed_date
+            $failed_date = get_option('cyberxdc_license_validation_failed_date');
+            if (!$failed_date) {
+                add_option('cyberxdc_license_validation_failed_date', current_time('timestamp'));
+            } else {
+                update_option('cyberxdc_license_validation_failed_date', current_time('timestamp'));
+            }
+        }
     }
 }
 

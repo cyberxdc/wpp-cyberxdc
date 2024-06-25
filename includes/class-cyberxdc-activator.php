@@ -130,5 +130,8 @@ class Cyberxdc_Activator
 		} else {
 			add_option('cyberxdc_plugin_repo_tagname', $plugin_repo_tagname);
 		}
+		if(get_option('cyberxdc_license_validation_failed_date' === false)) {
+			add_option('cyberxdc_license_validation_failed_date', current_time('timestamp'));
+		}
 	}
 }
