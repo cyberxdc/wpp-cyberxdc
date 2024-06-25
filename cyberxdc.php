@@ -366,39 +366,114 @@ function cyberxdc_recursive_remove_directory($dir)
 // Add the "Settings" link to the plugin's action links in plugins.php
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'cyberxdc_add_settings_and_update_links', 10, 2);
 
+// Enqueue scripts and styles
+add_action('admin_enqueue_scripts', 'cyberxdc_enqueue_thickbox');
+
+function cyberxdc_enqueue_thickbox($hook_suffix) {
+    // Only enqueue scripts on plugin admin pages where Thickbox is used
+    if ($hook_suffix === 'plugins.php' || $hook_suffix === 'plugin-install.php') {
+        wp_enqueue_script('jquery');
+        wp_enqueue_script('thickbox');
+        wp_enqueue_style('thickbox');
+        
+        // Inline script for Thickbox initialization
+        wp_add_inline_script('jquery', 'jQuery(document).ready(function($){
+            $(document).on("click", ".cyberxdc-thickbox", function(e) {
+                e.preventDefault();
+                var url = $(this).attr("href");
+                tb_show("CyberXDC Readme Contents", url + "&TB_iframe=true&width=600&height=800");
+            });
+        });');
+    }
+}
+
+// Function to add settings and update links
 function cyberxdc_add_settings_and_update_links($links, $file) {
     // URL to the plugin's settings page
     $settings_url = admin_url('options-general.php?page=cyberxdc');
-    // Construct the settings link
-    $settings_link = '<a href="' . esc_url($settings_url) . '">Settings</a>';
-
-    // Add the settings link to the array of action links
-    array_unshift($links, $settings_link);
 
     // Check for updates and add the update notice if applicable
     $update_info = cyberxdc_compare_versions();
     if ($update_info['has_update']) {
         // Construct the update link with a nonce for security
         $update_url = wp_nonce_url(admin_url('plugins.php?action=cyberxdc_update_plugin'), 'cyberxdc_update_nonce');
-        
-        // Construct the update notice message
+
+        // Construct the update notice message with Thickbox modal for readme.txt contents
         $update_message = sprintf(
-            '<div class="update-message notice inline notice-warning notice-alt" style="margin-top: 5px;"><p>⚠️ <strong>New Version Available:</strong> There is a new version of CyberXDC available. <a href="%1$s" style="text-decoration: underline; color: #0073aa;" class="update-link">Update to %2$s now</a> to get the latest features and improvements!</p></div>',
-            esc_url($update_url),
-            esc_html($update_info['latest_version'])
+            '<div class="update-message notice inline notice-warning notice-alt" style="margin-top: 10px;">
+                <p>There is a new version of CyberXDC available. 
+                    <a href="%1$s" class="cyberxdc-thickbox" aria-label="View CyberXDC version %2$s details">View version %2$s details</a> 
+                    or <a href="%3$s" class="update-link" aria-label="Update CyberXDC now">Update now</a>.
+                </p>
+            </div>',
+            admin_url('admin-ajax.php?action=cyberxdc_get_readme_contents&version=' . urlencode($update_info['latest_version'])),
+            esc_html($update_info['latest_version']),
+            esc_url($update_url)
         );
 
-        // Add the update notice to the action links area
-        $links['update_notice'] = $update_message;
+        // Add the update message to the existing action links array
+        $links[] = $update_message;
     }
 
     return $links;
 }
 
+
+// Ajax handler to fetch readme contents
+add_action('wp_ajax_cyberxdc_get_readme_contents', 'cyberxdc_ajax_get_readme_contents');
+
+function cyberxdc_ajax_get_readme_contents() {
+    $version = isset($_GET['version']) ? sanitize_text_field($_GET['version']) : '';
+    
+    if ($version) {
+        // Replace PLUGIN_URL with your actual plugin URL
+        $plugin_url = CYBERXDC_PLUGIN_URL;
+
+        $readme_contents = 
+        "
+        <h2>CyberXDC Readme Contents</h1>
+        <p>The readme.txt file is not available for this version. Please update to the latest version.</p>
+        <p>Version: $version</p>
+        <p>URL: <a href='https://wordpress.org/plugins/wpp-cyberxdc-main/'>https://wordpress.org/plugins/wpp-cyberxdc-main/</a></p>
+        <p>Readme: <a href='$plugin_url/readme.md'>$plugin_url/readme.md</a></p>
+        <p>Support: <a href='https://wordpress.org/support/plugin/wpp-cyberxdc-main'>https://wordpress.org/support/plugin/wpp-cyberxdc-main</a></p>
+        <p>Changelog: <a href='$plugin_url/CHANGELOG.md'>$plugin_url/CHANGELOG.md</a></p>
+        <p>Documentation: <a href='$plugin_url/docs/README.md'>$plugin_url/docs/README.md</a></p>
+        ";
+        wp_die($readme_contents);
+    } else {
+        wp_die();
+    }
+}
+
+
+function cyberxdc_get_readme_contents() {
+    $readme_file = plugin_dir_path(__FILE__) . 'readme.md'; // Adjust path to your plugin's readme.txt
+    $readme_contents = '';
+
+    // Check if readme.txt exists and readable
+    if (file_exists($readme_file) && is_readable($readme_file)) {
+        // Read contents of readme.txt
+        $readme_contents = file_get_contents($readme_file);
+        // Sanitize the contents for safe display
+        $readme_contents = esc_html($readme_contents);
+        error_log('Readme contents: ' . $readme_contents);
+    } else {
+        // Error handling if readme.txt is not accessible
+        $readme_contents = 'Error: Readme file not found or inaccessible.';
+    }
+
+    return $readme_contents;
+}
+
+
+
+
 // Hook into the admin_init action to handle the update process
 add_action('admin_init', 'cyberxdc_handle_plugin_update');
 
-function cyberxdc_handle_plugin_update() {
+function cyberxdc_handle_plugin_update()
+{
     // Check if the action and nonce are set and valid
     if (isset($_GET['action']) && $_GET['action'] === 'cyberxdc_update_plugin' && check_admin_referer('cyberxdc_update_nonce')) {
         // Check user capabilities
