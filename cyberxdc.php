@@ -363,30 +363,37 @@ function cyberxdc_recursive_remove_directory($dir)
     return rmdir($dir);
 }
 
-// Add a custom update link with a detailed message to the plugin's action links in the plugins.php page
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'cyberxdc_add_update_link_with_message');
+// Add the "Settings" link to the plugin's action links in plugins.php
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'cyberxdc_add_settings_and_update_links', 10, 2);
 
-function cyberxdc_add_update_link_with_message($links) {
+function cyberxdc_add_settings_and_update_links($links, $file) {
+    // URL to the plugin's settings page
+    $settings_url = admin_url('options-general.php?page=cyberxdc');
+    // Construct the settings link
+    $settings_link = '<a href="' . esc_url($settings_url) . '">Settings</a>';
+
+    // Add the settings link to the array of action links
+    array_unshift($links, $settings_link);
+
+    // Check for updates and add the update notice if applicable
     $update_info = cyberxdc_compare_versions();
     if ($update_info['has_update']) {
         // Construct the update link with a nonce for security
-        $update_link = '<a href="' . wp_nonce_url(admin_url('plugins.php?action=cyberxdc_update_plugin'), 'cyberxdc_update_nonce') . '" style="color: red;">Update to ' . esc_html($update_info['latest_version']) . '</a>';
+        $update_url = wp_nonce_url(admin_url('plugins.php?action=cyberxdc_update_plugin'), 'cyberxdc_update_nonce');
         
-        // Construct a standard WordPress warning notice
-        $detailed_message = '<div class="update-message notice inline notice-warning notice-alt"><p>';
-        $detailed_message .= '⚠️ <strong>New Version Available:</strong> There is a new version of CyberXDC available. ';
-        $detailed_message .= 'Kindly update to get the latest features and improvements!';
-        $detailed_message .= '</p></div>';
-        
-        // Add the warning notice message to the action links
-        array_unshift($links, $detailed_message . '<br>' . $update_link);
+        // Construct the update notice message
+        $update_message = sprintf(
+            '<div class="update-message notice inline notice-warning notice-alt" style="margin-top: 5px;"><p>⚠️ <strong>New Version Available:</strong> There is a new version of CyberXDC available. <a href="%1$s" style="text-decoration: underline; color: #0073aa;" class="update-link">Update to %2$s now</a> to get the latest features and improvements!</p></div>',
+            esc_url($update_url),
+            esc_html($update_info['latest_version'])
+        );
+
+        // Add the update notice to the action links area
+        $links['update_notice'] = $update_message;
     }
+
     return $links;
 }
-
-// Hook the custom function into the plugin's action links filter
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'cyberxdc_add_update_link_with_message');
-
 
 // Hook into the admin_init action to handle the update process
 add_action('admin_init', 'cyberxdc_handle_plugin_update');
