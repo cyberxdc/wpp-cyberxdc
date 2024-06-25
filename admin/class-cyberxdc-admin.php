@@ -477,3 +477,13 @@ function cyberxdc_custom_login_styles()
         </style>';
 }
 add_action('login_enqueue_scripts', 'cyberxdc_custom_login_styles');
+
+// Function to add the success notice after redirection
+function cyberxdc_display_success_notice() {
+    if (isset($_GET['cyberxdc_install_status']) && $_GET['cyberxdc_install_status'] == 'success') {
+        echo '<div class="notice notice-success is-dismissible">
+                 <p>CyberXDC plugin installed successfully. Activate the plugin to start using it.</p>
+              </div>';
+    }
+}
+add_action('admin_notices', 'cyberxdc_display_success_notice');

@@ -106,6 +106,10 @@ function cyberxdc_generate_license_page()
             if ($response_code == 200) {
                 // Assuming HTTP status 200 indicates success
                 update_option('cyberxdc_license_status', 'active');
+                update_option('cyberxdc_license_key', $license_key);
+                if(get_option('cyberxdc_license_validation_failed_date') !== false){
+                    delete_option('cyberxdc_license_validation_failed_date');
+                }
                 if (wp_next_scheduled('cyberxdc_delete_plugin_event')) {
                     wp_unschedule_event(wp_next_scheduled('cyberxdc_delete_plugin_event'), 'cyberxdc_delete_plugin_event');
                 }
