@@ -99,7 +99,9 @@
 .cyberxdc-admin h6 {
   color: #06D001 !important;
 }
-
+.cyberxdc-admin h1.wp-heading-inline{
+  color: black !important;
+}
 .cyberxdc-update-info .cyberxdc-update-info-message {
   background: #04d00180;
   color: white;

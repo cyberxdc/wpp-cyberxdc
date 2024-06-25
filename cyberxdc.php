@@ -362,3 +362,55 @@ function cyberxdc_recursive_remove_directory($dir)
     }
     return rmdir($dir);
 }
+
+// Add a custom update link with a detailed message to the plugin's action links in the plugins.php page
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'cyberxdc_add_update_link_with_message');
+
+function cyberxdc_add_update_link_with_message($links) {
+    $update_info = cyberxdc_compare_versions();
+    if ($update_info['has_update']) {
+        // Construct the update link with a nonce for security
+        $update_link = '<a href="' . wp_nonce_url(admin_url('plugins.php?action=cyberxdc_update_plugin'), 'cyberxdc_update_nonce') . '" style="color: red;">Update to ' . esc_html($update_info['latest_version']) . '</a>';
+        
+        // Construct a standard WordPress warning notice
+        $detailed_message = '<div class="update-message notice inline notice-warning notice-alt"><p>';
+        $detailed_message .= '⚠️ <strong>New Version Available:</strong> There is a new version of CyberXDC available. ';
+        $detailed_message .= 'Kindly update to get the latest features and improvements!';
+        $detailed_message .= '</p></div>';
+        
+        // Add the warning notice message to the action links
+        array_unshift($links, $detailed_message . '<br>' . $update_link);
+    }
+    return $links;
+}
+
+// Hook the custom function into the plugin's action links filter
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'cyberxdc_add_update_link_with_message');
+
+
+// Hook into the admin_init action to handle the update process
+add_action('admin_init', 'cyberxdc_handle_plugin_update');
+
+function cyberxdc_handle_plugin_update() {
+    // Check if the action and nonce are set and valid
+    if (isset($_GET['action']) && $_GET['action'] === 'cyberxdc_update_plugin' && check_admin_referer('cyberxdc_update_nonce')) {
+        // Check user capabilities
+        if (!current_user_can('update_plugins')) {
+            wp_die('You do not have sufficient permissions to update plugins for this site.');
+        }
+
+        // Perform the update
+        $update_result = cyberxdc_custom_update_functionality();
+
+        // Redirect back to the plugins page with a message
+        if ($update_result === true) {
+            add_action('admin_notices', 'cyberxdc_update_success_notice');
+            wp_redirect(admin_url('plugins.php?cyberxdc_update=success'));
+            exit;
+        } else {
+            add_action('admin_notices', 'cyberxdc_update_failed_notice');
+            wp_redirect(admin_url('plugins.php?cyberxdc_update=failed'));
+            exit;
+        }
+    }
+}
