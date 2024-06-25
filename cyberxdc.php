@@ -368,8 +368,10 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'cyberxdc_add_upd
 
 function cyberxdc_add_update_link($links) {
     $update_info = cyberxdc_compare_versions();
+    $settings_url = admin_url('options-general.php?page=cyberxdc');
+    $settings_link = '<a href="' . esc_url($settings_url) . '">Settings</a>';
+    array_unshift($links, $settings_link);
     if ($update_info['has_update']) {
-        // Add the update link with a nonce for security
         $update_link = '<a href="' . wp_nonce_url(admin_url('plugins.php?action=cyberxdc_update_plugin'), 'cyberxdc_update_nonce') . '" style="color: red;">Update to ' . esc_html($update_info['latest_version']) . '</a>';
         array_unshift($links, $update_link);
     }
