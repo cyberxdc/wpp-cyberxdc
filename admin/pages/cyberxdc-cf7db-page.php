@@ -75,7 +75,15 @@ function cyberxdc_render_cf7db_page()
 {
     // Check if CF7DB plugin is active
     if (!function_exists('wpcf7_contact_form')) {
-        echo 'Contact Form 7 plugin is not active.';
+        ?>
+        <div class="cyberxdc-wrap">
+            <div class="container">
+                <div style="max-width: 100%;" class="card">
+                    <p>CF7DB plugin is not active. Please activate the plugin to use this feature.</p>
+                </div>
+            </div>
+        </div>
+        <?php
         return;
     }
 
