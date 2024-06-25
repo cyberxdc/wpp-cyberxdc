@@ -22,7 +22,7 @@ function cyberxdc_smtp_page()
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['smtp_settings'])) {
             update_option('cyberxdc_smtp_settings', $_POST['smtp_settings']);
-            echo '<div class="updated"><p>SMTP settings saved.</p></div>';
+            $notice = '<div class="notice notice-success is-dismissible"><p>SMTP settings saved successfully.</p></div>';
         } elseif (isset($_POST['to_email'])) {
             // Sanitize input values
             $from_email = sanitize_email($_POST['from_email']);
@@ -34,9 +34,11 @@ function cyberxdc_smtp_page()
             $result = wp_mail($to_email, $subject, $message, $headers);
             // Display result message
             if ($result) {
-                echo '<div class="updated"><p>Test email sent successfully.</p></div>';
+                $notice = '<div class="notice notice-success is-dismissible"><p>Test email sent successfully.</p></div>';
+                error_log('Test email sent successfully.');
             } else {
-                echo '<div class="error"><p>Failed to send test email. Please check your SMTP settings.</p></div>';
+                $notice = '<div class="notice notice-error is-dismissible"><p>Error sending test email.</p></div>';
+                error_log('Error sending test email.' . print_r($result, true));
             }
         }
     }
@@ -58,6 +60,7 @@ function cyberxdc_smtp_page()
             <div style=" max-width: 100%;" class="cyberxdc-header card">
                 <h1>SMTP Settings</h1>
                 <p>Effortlessly configure and manage SMTP settings directly from your WordPress admin panel with CyberXDC. Ensure reliable email delivery and seamless communication with your audience. Integrate with your preferred email service providers and validate configurations with our convenient test email feature. Simplify your workflow and enhance user engagement with efficient email management, all within a few clicks.</p>
+                <?php echo $notice; ?>
             </div>
             <div style="display: flex;" class="row">
                 <div class="card col-md-6">
