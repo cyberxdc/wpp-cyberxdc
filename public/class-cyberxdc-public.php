@@ -3,7 +3,7 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * @link       https://cyberxdc.42web.io
+ * @link       https://cyberxdc.online
  * @since      1.0.0
  *
  * @package    Cyberxdc

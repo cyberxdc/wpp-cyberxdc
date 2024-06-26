@@ -1,17 +1,4 @@
 <?php
-
-/**
- * Provide a admin area view for the plugin
- *
- * This file is used to markup the admin-facing aspects of the plugin.
- *
- * @link       https://cyberxdc.42web.io
- * @since      1.0.0
- *
- * @package    Cyberxdc
- * @subpackage Cyberxdc/admin/partials
- */
-
 /**
  * Callback function to display content for CyberXDC dashboard page
  */
@@ -79,7 +66,9 @@ function cyberxdc_dashboard_page()
     }
 
     // Server Information
-    $server_details = array(
+    global $server_details;
+
+    $server_details = $server_details = array(
         'Hosted Server' => gethostname(),
         'IP Address' => $_SERVER['SERVER_ADDR'],
         'City' => $logged_in_city,
@@ -92,7 +81,7 @@ function cyberxdc_dashboard_page()
 
     $visitors_logs = get_latest_visitors_logs();
     $users_logs = get_latest_users_logs();
-
+    
     // Important features and their links
     $notice = '';
 ?>

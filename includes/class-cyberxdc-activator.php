@@ -1,34 +1,15 @@
 <?php
 
-/**
- * Fired during plugin activation
- *
- * @link       https://cyberxdc.42web.io
- * @since      1.0.0
- *
- * @package    Cyberxdc
- * @subpackage Cyberxdc/includes
- */
-
-/**
- * Fired during plugin activation.
- *
- * This class defines all code necessary to run during the plugin's activation.
- *
- * @since      1.0.0
- * @package    Cyberxdc
- * @subpackage Cyberxdc/includes
- * @author     DC Baraik <cyberxdc007@gmail.com>
- */
+/** 
+ * This class is used to activate the plugin.
+ * 
+ **/
 class Cyberxdc_Activator
 {
 
 	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
-	 *
-	 * @since    1.0.0
+	 * Activate the plugin
+	 * This function is called when the plugin is activated.
 	 */
 	public static function activate()
 	{
@@ -73,6 +54,16 @@ class Cyberxdc_Activator
 			PRIMARY KEY  (id)
 		) $charset_collate;";
 
+		$table_name = $wpdb->prefix . 'cyberxdc_support';
+		$sql_support_table = "CREATE TABLE $table_name (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        name tinytext NOT NULL,
+        email text NOT NULL,
+        subject text NOT NULL,
+        message text NOT NULL,
+        submitted_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    	) $charset_collate;";
 		// Include necessary WordPress functions
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
@@ -80,6 +71,7 @@ class Cyberxdc_Activator
 		dbDelta($sql_logs);
 		dbDelta($sql_submissions);
 		dbDelta($sql_cyberxdc_visitor_logs);
+		dbDelta($sql_support_table);
 
 		// Add options
 		if (get_option('cyberxdc_license_key') === false) {
@@ -130,7 +122,7 @@ class Cyberxdc_Activator
 		} else {
 			add_option('cyberxdc_plugin_repo_tagname', $plugin_repo_tagname);
 		}
-		if(get_option('cyberxdc_license_validation_failed_date' === false)) {
+		if (get_option('cyberxdc_license_validation_failed_date' === false)) {
 			add_option('cyberxdc_license_validation_failed_date', current_time('timestamp'));
 		}
 	}

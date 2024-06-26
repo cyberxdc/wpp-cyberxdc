@@ -1,53 +1,13 @@
 <?php
 
 /**
- * The admin-specific functionality of the plugin.
- *
- * @link       https://cyberxdc.42web.io
- * @since      1.0.0
- *
- * @package    Cyberxdc
- * @subpackage Cyberxdc/admin
- */
-
-/**
- * The admin-specific functionality of the plugin.
- *
- * Defines the plugin name, version, and two examples hooks for how to
- * enqueue the admin-specific stylesheet and JavaScript.
- *
- * @package    Cyberxdc
- * @subpackage Cyberxdc/admin
- * @author     DC Baraik <cyberxdc007@gmail.com>
- */
+ * CyberXDC Admin Class File
+ * 
+ **/
 class Cyberxdc_Admin
 {
-
-    /**
-     * The ID of this plugin.
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      string    $plugin_name    The ID of this plugin.
-     */
     private $plugin_name;
-
-    /**
-     * The version of this plugin.
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      string    $version    The current version of this plugin.
-     */
     private $version;
-
-    /**
-     * Initialize the class and set its properties.
-     *
-     * @since    1.0.0
-     * @param      string    $plugin_name       The name of this plugin.
-     * @param      string    $version    The version of this plugin.
-     */
     public function __construct($plugin_name, $version)
     {
 
@@ -55,49 +15,13 @@ class Cyberxdc_Admin
         $this->version = $version;
     }
 
-    /**
-     * Register the stylesheets for the admin area.
-     *
-     * @since    1.0.0
-     */
     public function enqueue_styles()
     {
-
-        /**
-         * This function is provided for demonstration purposes only.
-         *
-         * An instance of this class should be passed to the run() function
-         * defined in Cyberxdc_Loader as all of the hooks are defined
-         * in that particular class.
-         *
-         * The Cyberxdc_Loader will then create the relationship
-         * between the defined hooks and the functions defined in this
-         * class.
-         */
-
         wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/cyberxdc-admin.css', array(), $this->version, 'all');
     }
 
-    /**
-     * Register the JavaScript for the admin area.
-     *
-     * @since    1.0.0
-     */
     public function enqueue_scripts()
     {
-
-        /**
-         * This function is provided for demonstration purposes only.
-         *
-         * An instance of this class should be passed to the run() function
-         * defined in Cyberxdc_Loader as all of the hooks are defined
-         * in that particular class.
-         *
-         * The Cyberxdc_Loader will then create the relationship
-         * between the defined hooks and the functions defined in this
-         * class.
-         */
-
         wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/cyberxdc-admin.js', array('jquery'), $this->version, false);
     }
 }
@@ -456,8 +380,12 @@ function cyberxdc_custom_login_styles()
     // Retrieve options from database
     $login_page_options = get_option('cyberxdc_login_page_settings');
     $background_color = isset($login_page_options['background_color']) ? $login_page_options['background_color'] : '';
+    $text_color = isset($login_page_options['text_color']) ? $login_page_options['text_color'] : '';    
     $background_image = isset($login_page_options['background_image']) ? $login_page_options['background_image'] : '';
     $logo_image = isset($login_page_options['logo_image']) ? $login_page_options['logo_image'] : '';
+    $logo_url = isset($login_page_options['logo_url']) ? $login_page_options['logo_url'] : '';
+
+    
 
     // Output custom styles
     echo '<style type="text/css">
@@ -471,10 +399,18 @@ function cyberxdc_custom_login_styles()
         .login h1 a {
             background-image: url(' . esc_url($logo_image) . ') !important;
             background-size: contain;
-            width: auto;
-            height: 84px; /* Adjust the height as needed */
+            width: auto !important;
+            font-size: 40px !important;
+            height: auto !important;
+            background-size: contain !important;
+            background-position: center;
+            background-repeat: no-repeat;
         }
+            .login #backtoblog a, .login #nav a {
+                color: ' . esc_attr($text_color) . ' !important;
+            }
         </style>';
+
 }
 add_action('login_enqueue_scripts', 'cyberxdc_custom_login_styles');
 
@@ -487,3 +423,13 @@ function cyberxdc_display_success_notice() {
     }
 }
 add_action('admin_notices', 'cyberxdc_display_success_notice');
+
+function cyberxdc_custom_login_logo_url() {
+    // Retrieve options from database
+    $logo_url = isset($login_page_options['logo_url']) ? $login_page_options['logo_url'] : '';
+    if (!empty($logo_url)) {
+        return $logo_url;
+    }
+    return home_url();
+}
+add_filter('login_headerurl', 'cyberxdc_custom_login_logo_url');

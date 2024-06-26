@@ -3,7 +3,7 @@
 /**
  * Register all actions and filters for the plugin
  *
- * @link       https://cyberxdc.42web.io
+ * @link       https://cyberxdc.online
  * @since      1.0.0
  *
  * @package    Cyberxdc
@@ -19,7 +19,7 @@
  *
  * @package    Cyberxdc
  * @subpackage Cyberxdc/includes
- * @author     DC Baraik <cyberxdc007@gmail.com>
+ * @author     DC Baraik <contact@cyberxdc.online>
  */
 class Cyberxdc_Loader {
 

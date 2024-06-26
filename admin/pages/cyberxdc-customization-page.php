@@ -27,6 +27,7 @@ function cyberxdc_customization_page()
             </div>
         </div>
     </div>
+
 <?php
 }
 function cyberxdc_login_page_tab()
@@ -34,70 +35,113 @@ function cyberxdc_login_page_tab()
     // Retrieve options from database
     $login_page_options = get_option('cyberxdc_login_page_settings');
     $background_color = isset($login_page_options['background_color']) ? $login_page_options['background_color'] : '';
+    $text_color = isset($login_page_options['text_color']) ? $login_page_options['text_color'] : '';
     $background_image = isset($login_page_options['background_image']) ? $login_page_options['background_image'] : '';
     $logo_image = isset($login_page_options['logo_image']) ? $login_page_options['logo_image'] : '';
     if (isset($_POST['login_page_submit'])) {
         $background_color = sanitize_hex_color($_POST['background_color']);
+        $text_color = sanitize_hex_color($_POST['text_color']);
         $background_image = esc_url($_POST['background_image']);
         $logo_image = esc_url($_POST['logo_image']);
+        $logo_url = esc_url($_POST['logo_url']);
 
         $login_page_options = array(
             'background_color' => $background_color,
+            'text_color' => $text_color,
             'background_image' => $background_image,
-            'logo_image' => $logo_image
+            'logo_image' => $logo_image,
+            'logo_url' => $logo_url
         );
 
         update_option('cyberxdc_login_page_settings', $login_page_options);
         $notice = 'Settings saved successfully.';
     }
 ?>
-    <div class="login-tab-wrapper">
-        <div style="max-width: 100%;" class="card">
-            <form method="post" action="" enctype="multipart/form-data">
-                <h3>Login Page Settings</h3>
-                <?php if (!empty($notice)) : ?>
-                    <div style="margin: 0px;" class="notice notice-success is-dismissible">
-                        <p><?php echo $notice; ?></p>
+<div class="login-tab-wrapper">
+<div style="max-width: 100%;" class="card">
+    <form method="post" action="" enctype="multipart/form-data">
+        <h3>Login Page Settings</h3>
+        <?php if (!empty($notice)) : ?>
+            <div style="margin: 0px;" class="notice notice-success is-dismissible">
+                <p><?php echo $notice; ?></p>
+            </div>
+        <?php endif; ?>
+        <table class="form-table">
+            <!-- Background Color Setting -->
+            <tr>
+                <th scope="row">
+                    <label for="background_color">Background Color</label>
+                </th>
+                <td>
+                    <input type="text" name="background_color" id="background_color" value="<?php echo esc_attr($background_color); ?>" class="color-picker" />
+                    <div id="background_color_picker" class="color-picker"></div>
+                    <p class="description">Select the background color for the login page. This will apply to the entire page behind the login form.</p>
+                </td>
+            </tr>
+            <!-- Text Color Setting -->
+            <tr>
+                <th scope="row">
+                    <label for="text_color">Text Color</label>
+                </th>
+                <td>
+                    <input type="text" name="text_color" id="text_color" value="<?php echo esc_attr($text_color); ?>" class="color-picker" />
+                    <div id="text_color_picker" class="color-picker"></div>
+                    <p class="description">Choose the color for the text on the login page, including labels and links.</p>
+                </td>
+            </tr>
+            <!-- Redirect Login Page Logo URL Setting -->
+            <tr>
+                <th scope="row">
+                    <label for="logo_url">Redirect Login Page Logo URL</label>
+                </th>
+                <td>
+                    <input type="text" name="logo_url" id="logo_url" value="<?php echo esc_url($logo_url); ?>" />
+                    <p class="description">Set the URL that the login page logo should link to when clicked. Typically, this could be your site's homepage or a custom page.</p>
+                </td>
+            </tr>
+            <!-- Background Image Setting -->
+            <tr>
+                <th scope="row">
+                    <label for="background_image">Background Image</label>
+                </th>
+                <td>
+                    <input type="text" name="background_image" id="background_image" value="<?php echo esc_url($background_image); ?>" />
+                    <input type="button" name="upload_background_image_button" id="upload_background_image_button" class="button" value="Upload Image">
+                    <div id="background_image_preview" style="margin-top: 10px;">
+                        <?php if ($background_image) : ?>
+                            <img src="<?php echo esc_url($background_image); ?>" alt="Background Image" style="max-width: 120px; margin-bottom: 10px; display: block;" />
+                            <button type="button" id="delete_background_image_button" class="button button-danger">Delete Image</button>
+                        <?php endif; ?>
                     </div>
-                <?php endif; ?>
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="background_color">Background Color</label></th>
-                        <td><input type="color" name="background_color" id="background_color" value="<?php echo esc_attr($background_color); ?>" class="color-picker" /></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="background_image">Background Image</label></th>
-                        <td>
-                            <input type="text" name="background_image" id="background_image" value="<?php echo esc_url($background_image); ?>" />
-                            <input type="button" name="upload_background_image_button" id="upload_background_image_button" class="button" value="Upload Image">
-                            <div id="background_image_preview" style="margin-top: 10px;">
-                                <?php if ($background_image) : ?>
-                                    <img src="<?php echo esc_url($background_image); ?>" alt="Background Image" style="max-width: 120px; margin-bottom: 10px; display: block;" />
-                                    <button type="button" id="delete_background_image_button" class="button button-danger ">Delete Image</button>
-                                <?php endif; ?>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="logo_image">Logo Image</label></th>
-                        <td>
-                            <input type="text" name="logo_image" id="logo_image" value="<?php echo esc_url($logo_image); ?>" />
-                            <input type="button" name="upload_logo_image_button" id="upload_logo_image_button" class="button" value="Upload Image">
-                            <div id="logo_image_preview" style="margin-top: 10px;">
-                                <?php if ($logo_image) : ?>
-                                    <img src="<?php echo esc_url($logo_image); ?>" alt="Logo Image" style="max-width: 120px; margin-bottom: 10px; display: block;" />
-                                    <button type="button" id="delete_logo_image_button" class="button button-danger ">Delete Image</button>
-                                <?php endif; ?>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-                <p class="submit">
-                    <input type="submit" name="login_page_submit" class="button-primary" value="Save Changes">
-                </p>
-            </form>
-        </div>
-    </div>
+                    <p class="description">Upload or select an image to use as the background for the login page. This image will display behind the login form.</p>
+                </td>
+            </tr>
+            <!-- Logo Image Setting -->
+            <tr>
+                <th scope="row">
+                    <label for="logo_image">Logo Image</label>
+                </th>
+                <td>
+                    <input type="text" name="logo_image" id="logo_image" value="<?php echo esc_url($logo_image); ?>" />
+                    <input type="button" name="upload_logo_image_button" id="upload_logo_image_button" class="button" value="Upload Image">
+                    <div id="logo_image_preview" style="margin-top: 10px;">
+                        <?php if ($logo_image) : ?>
+                            <img src="<?php echo esc_url($logo_image); ?>" alt="Logo Image" style="max-width: 120px; margin-bottom: 10px; display: block;" />
+                            <button type="button" id="delete_logo_image_button" class="button button-danger">Delete Image</button>
+                        <?php endif; ?>
+                    </div>
+                    <p class="description">Upload or select an image to replace the default WordPress logo on the login page.</p>
+                </td>
+            </tr>
+        </table>
+        <!-- Submit Button -->
+        <p class="submit">
+            <input type="submit" name="login_page_submit" class="button-primary" value="Save Changes">
+        </p>
+    </form>
+</div>
+</div>
+
     <script>
         jQuery(document).ready(function($) {
             $('#upload_background_image_button').click(function() {
@@ -116,7 +160,7 @@ function cyberxdc_login_page_tab()
                 mediaUploader.on('select', function() {
                     var attachment = mediaUploader.state().get('selection').first().toJSON();
                     $('#background_image').val(attachment.url);
-                    $('#background_image_preview').html('<img src="' + attachment.url + '" alt="Background Image" style="max-width: 200px; display: block;" />' +
+                    $('#background_image_preview').html('<img src="' + attachment.url + '" alt="Background Image" style="max-width: 200px; border:1px solid black; display: block;" />' +
                         '<button type="button" id="delete_background_image_button" class="button">Delete Image</button>');
                 });
                 mediaUploader.open();
@@ -158,9 +202,49 @@ function cyberxdc_login_page_tab()
         });
     </script>
     <style>
-        .
+        .login-tab-wrapper .wp-picker-container{
+            position: relative;
+            top: -6px;
+        }
     </style>
 <?php
+}
+
+// Enqueue scripts and styles for the color picker
+function enqueue_color_picker() {
+    wp_enqueue_style('wp-color-picker');
+    wp_enqueue_script('wp-color-picker');
+}
+
+// Hook into admin enqueue scripts
+add_action('admin_enqueue_scripts', 'enqueue_color_picker');
+
+// Initialize the color picker on the input field
+add_action('admin_footer', 'initialize_color_picker');
+function initialize_color_picker() {
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        $('#background_color_picker').wpColorPicker({
+            change: function(event, ui) {
+                $('#background_color').val(ui.color.toString());
+            },
+            clear: function() {
+                $('#background_color').val('');
+            }
+        });
+
+        $('#text_color_picker').wpColorPicker({
+            change: function(event, ui) {
+                $('#text_color').val(ui.color.toString());
+            },
+            clear: function() {
+                $('#text_color').val('');
+            }
+        });
+    });
+    </script>
+    <?php
 }
 
 

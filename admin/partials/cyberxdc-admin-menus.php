@@ -1,18 +1,11 @@
 <?php 
 
 /**
- * Provide a admin area view for the plugin
- *
- * This file is used to markup the admin-facing aspects of the plugin.
- *
- * @link       https://cyberxdc.42web.io
- * @since      1.0.0
- *
- * @package    Cyberxdc
- * @subpackage Cyberxdc/admin/partials
- */
- 
- // admin/partials/cyberxdc-admin-menus.php
+ * CyberXDC Admin Menus Class File
+ * This file contains the CyberXDC admin menus.
+ */ 
+
+
  class Cyberxdc_Admin_Menus {
     public function __construct() {
         add_action('admin_menu', array($this, 'cyberxdc_add_menu'));
