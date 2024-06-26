@@ -124,6 +124,18 @@ function cyberxdc_generate_license_page()
         }
     }
 
+    function obfuscate_license_key($license_key) {
+        $key_length = strlen($license_key); 
+        $half_length = ceil($key_length / 2); 
+    
+        $visible_part = substr($license_key, 0, $half_length);
+    
+        $obfuscated_license = $visible_part . str_repeat('*', $key_length - $half_length);
+    
+        return $obfuscated_license;
+    }
+    $obfuscated_license = obfuscate_license_key($license_key);
+
     $important_features = array(
         'Login Page Customization' => 'admin.php?page=cyberxdc-customization',
         'Header and Footer Scripts' => 'admin.php?page=cyberxdc-customization&tab=custom_style',
@@ -167,14 +179,14 @@ function cyberxdc_generate_license_page()
                 <div class="card">
                     <h2>License Status</h2>
                     <?php echo $notice; ?>
-                    <p>License Key: <strong><?php echo esc_html($license_key); ?></strong></p>
+                    <p>License Key: <strong><?php echo esc_html($obfuscated_license); ?></strong></p>
                     <p>License Status: <strong><?php echo esc_html(get_option('cyberxdc_license_status')); ?></strong></p>
                 </div>
             <?php else : ?>
                 <div class="card">
                     <h2>License Status</h2>
                     <?php echo $notice; ?>
-                    <p>License Key: <strong><?php echo esc_html($license_key); ?></strong></p>
+                    <p>License Key: <strong><?php echo esc_html($obfuscated_license); ?></strong></p>
                     <p>License Status: <strong><?php echo esc_html(get_option('cyberxdc_license_status')); ?></strong></p>
                 </div>
             <?php endif; ?>
