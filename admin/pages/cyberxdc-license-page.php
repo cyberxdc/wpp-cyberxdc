@@ -86,9 +86,9 @@ function cyberxdc_generate_license_page()
         $activation_data = array(
             'license_key' => $license_key,
             'domain' => home_url(),
-            'admin_email' => get_option('admin_email'),
-            'server_ip' => $_SERVER['SERVER_ADDR'],
-            'user_ip' => $_SERVER['REMOTE_ADDR'],
+            'user_email' => get_option('admin_email'),
+            'user_name' => get_option('admin_user'),
+            'server_name' => gethostname(),
         );
 
         // Send activation request

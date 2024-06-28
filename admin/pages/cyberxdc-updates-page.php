@@ -152,7 +152,7 @@ function cyberxdc_custom_update_functionality()
     if (!$wp_filesystem->delete($plugin_temp_zip)) {
         error_log('Failed to delete the temporary plugin ZIP file.');
     }
-    if (!$wp_filesystem->exists(WP_PLUGIN_DIR . '/wpp-cyberxdc-main')) {
+    if (!$wp_filesystem->exists(WP_PLUGIN_DIR . '/wpp-cyberxdc')) {
         return false;
     }
     return true;
