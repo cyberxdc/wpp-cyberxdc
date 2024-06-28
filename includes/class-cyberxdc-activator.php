@@ -102,6 +102,7 @@ class Cyberxdc_Activator
 		$plugin_repo_name = $plugin_download_url_data['repo_name'];
 		$plugin_repo_owner = $plugin_download_url_data['repo_owner'];
 		$plugin_repo_tagname = $plugin_download_url_data['tag'];
+		$plugin_repo_version_file = $plugin_download_url_data['version_file'];
 
 		if (empty($plugin_repo_name) || empty($plugin_repo_owner) || empty($plugin_repo_tagname)) {
 			echo "Error: Invalid plugin repository data";
@@ -121,6 +122,9 @@ class Cyberxdc_Activator
 			update_option('cyberxdc_plugin_repo_tagname', $plugin_repo_tagname);
 		} else {
 			add_option('cyberxdc_plugin_repo_tagname', $plugin_repo_tagname);
+		}
+		if(get_option('cyberxdc_plugin_repo_version_file') === false) {
+			add_option('cyberxdc_plugin_repo_version_file', 'version.json');
 		}
 		if (get_option('cyberxdc_license_validation_failed_date' === false)) {
 			add_option('cyberxdc_license_validation_failed_date', current_time('timestamp'));

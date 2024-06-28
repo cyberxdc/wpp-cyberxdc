@@ -1,20 +1,38 @@
 <?php
 // Function to get the latest version from GitHub
 function cyberxdc_get_latest_version_from_github() {
-    $github_url = 'https://raw.githubusercontent.com/cyberxdc/wpp-cyberxdc/main/version.json';
+    // Get options for repo owner, repo name, and branch/tag
+    $repo_owner = get_option('cyberxdc_plugin_repo_owner');
+    $repo_name = get_option('cyberxdc_plugin_repo_name');
+    $branch_or_tag = get_option('cyberxdc_plugin_repo_tagname');
+    $file_path = get_option('cyberxdc_plugin_repo_version_file');
+
+    // Construct the GitHub URL
+    $github_url = "https://raw.githubusercontent.com/$repo_owner/$repo_name/$branch_or_tag/$file_path";
+
+    // Fetch the content from the GitHub URL
     $response = wp_remote_get($github_url);
+
+    // Check for errors in the response
     if (is_wp_error($response)) {
+        error_log('GitHub API request failed: ' . $response->get_error_message());
         return false;
     }
+
+    // Retrieve and decode the response body
     $body = wp_remote_retrieve_body($response);
     $data = json_decode($body, true);
 
+    // Check if the version is set in the response data
     if (isset($data['version'])) {
         return $data['version'];
     }
 
+    // Log an error if the version is not found
+    error_log('Version not found in the GitHub response.');
     return false;
 }
+
 
 // Function to compare versions
 function cyberxdc_compare_versions() {
@@ -110,9 +128,9 @@ function cyberxdc_handle_update_request()
 // Custom function to perform update functionality
 function cyberxdc_custom_update_functionality()
 {
-    $repo_owner = 'cyberxdc';
-    $repo_name = 'wpp-cyberxdc';
-    $tag = 'main'; 
+    $repo_owner = get_option('cyberxdc_plugin_repo_owner');
+    $repo_name = get_option('cyberxdc_plugin_repo_name');
+    $tag = get_option('cyberxdc_plugin_repo_tagname'); 
     $download_url = "https://github.com/{$repo_owner}/{$repo_name}/archive/refs/heads/{$tag}.zip";
     $plugin_temp_zip = WP_PLUGIN_DIR . '/cyberxdc-temp.zip';
     if (!is_writable(WP_PLUGIN_DIR)) {
